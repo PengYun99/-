@@ -33,3 +33,6 @@ DDR支持以下几种自刷新进入方式：a：软件配置进入，这种需�
  不支持ECC 1bit纠错和2bit检错  
  支持SPI NORFLASH接口带宽40Mbit/s  
  支持单片SPI NORFLASH最大容量16MByte
+
+## UART相关功能描述
+支持UART接口接收FIFO深度256BByte，发送FIFO深度256Byte
