@@ -36,3 +36,8 @@ DDR支持以下几种自刷新进入方式：a：软件配置进入，这种需�
 
 ## UART相关功能描述
 支持UART接口接收FIFO深度256BByte，发送FIFO深度256Byte
+
+# 功能描述
+## SOC_APP_CORE
+### 规格描述
+Hi1813EV100计算和控制子系统由位于同一个Cluster内部的4个ARM Cortex-A55处理器构成。其中1个Cortex-A55承载OM和FE功能，另外3个Cortex-A55承载BE功能
