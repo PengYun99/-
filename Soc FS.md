@@ -48,3 +48,6 @@ Hi1813EV100计算和控制子系统由位于同一个Cluster内部的4个ARM Cor
 
 #### NFI_QIC总线
 NFI_QIC为SOC_NFI_CORE内部的总线，主要完成SOC_NFI_CORE内部的总线互联访问，同时将内部CPU及其他master对DME及模块寄存器的访问通过QSP接口转到APP_QIC;将CPU及其他master对DDR的访问通过QSP接口转到DMI_QIC
+
+#### APP_QIC总线
+APP_QIC为系统中的主总线，承担着系统主要的访问通路路由及分发工作
