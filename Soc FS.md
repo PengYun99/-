@@ -41,3 +41,7 @@ DDR支持以下几种自刷新进入方式：a：软件配置进入，这种需�
 ## SOC_APP_CORE
 ### 规格描述
 Hi1813EV100计算和控制子系统由位于同一个Cluster内部的4个ARM Cortex-A55处理器构成。其中1个Cortex-A55承载OM和FE功能，另外3个Cortex-A55承载BE功能
+
+## SOC_BUS
+### 规格描述
+整系统总线分为2份：APP_QIC，NFI_QIC。2个总线之间通过QSP接口互联。其中NFI_QIC可以访问APP_QIC内部的外设寄存器，DME及DDR空间；APP_QIC可以访问NFI_QIC内部的所有寄存器及M7 CORE的TCM空间。APP_QIC/NFI_QIC访问各自内部的寄存器及存储空间在各自总线内部完成，不会通过QSP总线转到对端总线后再环回。
