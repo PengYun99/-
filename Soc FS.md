@@ -51,3 +51,49 @@ NFI_QIC为SOC_NFI_CORE内部的总线，主要完成SOC_NFI_CORE内部的总线�
 
 #### APP_QIC总线
 APP_QIC为系统中的主总线，承担着系统主要的访问通路路由及分发工作
+
+
+## IP特性
+### UART
+UART是一个异步串行的通信接口，主要执行串并转换功能　　
+
+支持中断方式和软件查询方式进行数据搬运　　　　
+
+支持8bit宽、深度为256的发送FIFO和10bit宽、深度为256的接收FIFO  
+
+UART内部有2个时钟：pclk和uart_clk  
+pclk：APB接口时钟，配置寄存器时钟  
+uart_clk：模块内部逻辑工作时钟  
+两者为同频同步时钟  
+
+UART内部有2个复位信号：presset_n和uart_preset_n  
+preset_n：APB接口复位信号，用于pclk时钟域的复位，低电平有效，异步复位，同步解复位  
+uart_preset_n：模块内部逻辑复位信号，用于uart_clk时钟域的复位，低电平有效，异步复位，同步解复位  
+
+### GPIO
+GPIO为通用可编程输入输出外设  
+支持1组32bit GPIO输入输出信号，支持GPIO个数：21个，支持高电平有效中断  
+
+滤除毛刺：
+如果毛刺信号跨越了两个debounce_clk的上升沿，则毛刺信号不会被滤除，如果没有跨越两个debounce_clk的上升沿，则毛刺信号被滤除。  
+
+GPIO有2个内部时钟：  
+pclk：APB接口时钟，GPIO发工作时钟　　
+gpio_db_clk：对输入信号做Debounce（防抖）功能时，需要CRG提供一个单独的时钟，其频率决定了滤除毛刺的长度，可以与pclk不同步，但频率比pclk低  
+
+GPIO内部有2个复位信号：
+preset_n：APB接口复位信号，除Debounce功能时所有逻辑的复位信号，异步复位，同步解复位，低电平有效  
+gpio_db_rst_n：debouncce功能复位信号，异步复位，同步解复位，低电平有效  
+
+初始化： 上电复位时，所有管脚默认为输入状态  
+
+### I2C
+采用串行时钟线SCL和串行数据线SDA进行数据传输，每次传输都以一个字节为单位。SCL和SDA都为双向总线，通过漏极开路实现线与逻辑  
+
+支持I2C接口的接收FIFO/发送FIFO深度：分别为64Byte  
+
+接口的中断：高电平有效中断  
+
+内部涉及2个时钟：pclk和i2c_clk,同步同频200Mhz  
+
+preset_n为pcclk作用寄存器的复位信号，低电平有效，i2x_rst_n为i2c_clk作用寄存器的复位信号，低电平有效。复位均为异步复位，同步解复位。复位撤离时同时撤离
