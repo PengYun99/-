@@ -123,3 +123,23 @@ Hi1813EV100芯片支持48个Timer 模块
 每个Timer模块支持64bit计数  
 支持Timer中断上报，高电平有效中断  
 
+### FMC
+FMC（Flash Memory Controller），实现对片外SPI NOR Flash数据存取控制  
+提供两个AHB Slave接口，一个寄存器接口，一个mem读写接口      
+每个片选的存储空间最大支持到16MB  
+FMC的片选信号均为低电平有效  
+
+### IPC
+IPC（Inter-Processor Communication）模块用于APP_CORE和NFI_CORE相互通信传递数据  
+每个IPC可以提供最多32个通道进行消息传送  
+
+### JTAG
+JTAG是芯片和关键子系统调试的主要控制接口，外部仿真器或者调试工具通过JTAG接口对芯片调试  
+
+### SYSCNT
+系统中提供两个64bit位宽的全局counter：SYSCNT0和SYSCNT1  
+SYSCNT0采用晶振时钟，不受看门狗复位，仅在上电复位期间被复位为0  
+SYSCNT0支持所有的CPU读取访问（ 4 APP_CORE + 8 NFI_CORE）  
+SYSCNT1采用晶振时钟，不受看门狗复位，仅在上电复位期间被复位为0  
+SYSCNT1支持所有的CPU读取访问（ 4 APP_CORE + 8 NFI_CORE）  
+SYSCNT0支持软件同步配置系统时间，SYSCNT1不支持软件同步配置系统时间
