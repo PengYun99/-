@@ -143,3 +143,22 @@ SYSCNT0支持所有的CPU读取访问（ 4 APP_CORE + 8 NFI_CORE）
 SYSCNT1采用晶振时钟，不受看门狗复位，仅在上电复位期间被复位为0  
 SYSCNT1支持所有的CPU读取访问（ 4 APP_CORE + 8 NFI_CORE）  
 SYSCNT0支持软件同步配置系统时间，SYSCNT1不支持软件同步配置系统时间
+
+### DMA
+最大支持8个逻辑通道（Channe），通道使能可配置  
+
+DEV的模块的软件实现的主要目标：  
+将功能实现和业务逻辑功能进行剥离参数化  
+硬件互斥访问。由于底层部分硬件共用，需要处理赢家资源互斥访问。  
+功能实现灵活易扩展。由于硬件ip的差异性，需要功能实现灵活易扩展  
+
+针对这些目标，主要通过OS Timer、retry Queue、状态机来实现这三个目标  
+通过业务数据和业务逻辑剥离和参数化来实现、巡检任务并行化通过OS timer实现  
+硬件互斥访问，通用单个OS retry Queue来实现业务功能呢访问的串行化，多OS retry Queue队列来实现业务功能的并行化访问 
+功能实现灵活易扩展OS状态机来实现  
+
+# DEV
+DEV主要是通过OS的timer、retry队列和状态机实现子系统的各个设备的监控和管理
+
+## SOC_APP_CORE
+Hi1813EV100计算和控制子系统由位于同一个Cluster内部的4个ARM Cortex-A55处理器构成。其中1个Cortex-A55承载OM和FE功能，另外3个Cortex-A55承载BE功能
