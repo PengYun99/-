@@ -78,7 +78,7 @@ GPIO为通用可编程输入输出外设
 如果毛刺信号跨越了两个debounce_clk的上升沿，则毛刺信号不会被滤除，如果没有跨越两个debounce_clk的上升沿，则毛刺信号被滤除。  
 
 GPIO有2个内部时钟：  
-pclk：APB接口时钟，GPIO发工作时钟　　
+pclk：APB接口时钟，GPIO的工作时钟　　
 gpio_db_clk：对输入信号做Debounce（防抖）功能时，需要CRG提供一个单独的时钟，其频率决定了滤除毛刺的长度，可以与pclk不同步，但频率比pclk低  
 
 GPIO内部有2个复位信号：
@@ -122,6 +122,8 @@ spi_rst_n：SPI模块内部逻辑复位信号，用于spi_clk作用寄存器的�
 Hi1813EV100芯片支持48个Timer 模块  
 每个Timer模块支持64bit计数  
 支持Timer中断上报，高电平有效中断  
+功能原理：64 bits Timer基于一个64 bits减法计数器。计数器的值在每个计数时钟的上升沿减1  
+初始化：设置计数初值；设置计数周期；配置计数模式、计数器长度、预分频系数及中断使能
 
 ### FMC
 FMC（Flash Memory Controller），实现对片外SPI NOR Flash数据存取控制  
@@ -137,15 +139,23 @@ IPC（Inter-Processor Communication）模块用于APP_CORE和NFI_CORE相互通�
 JTAG是芯片和关键子系统调试的主要控制接口，外部仿真器或者调试工具通过JTAG接口对芯片调试  
 
 ### SYSCNT
-系统中提供两个64bit位宽的全局counter：SYSCNT0和SYSCNT1  
+系统中提供两个64bit位宽的全局counter：SYSCNT0和SYSCNT1  ，频率为固定的25M
 SYSCNT0采用晶振时钟，不受看门狗复位，仅在上电复位期间被复位为0  
 SYSCNT0支持所有的CPU读取访问（ 4 APP_CORE + 8 NFI_CORE）  
 SYSCNT1采用晶振时钟，不受看门狗复位，仅在上电复位期间被复位为0  
 SYSCNT1支持所有的CPU读取访问（ 4 APP_CORE + 8 NFI_CORE）  
-SYSCNT0支持软件同步配置系统时间，SYSCNT1不支持软件同步配置系统时间
+SYSCNT0支持软件同步配置系统时间，SYSCNT1不支持软件同步配置系统时间  
+
+### WDOG
+WDOG（系统看门狗）用于系统异常情况下，一定时间内发出异常指示信号或者复位信号，以复位整个系统  
+系统中支持12个WDOG, 其中包含1个全局WDOG（又称硬狗）和11个普通WDOG（又称软狗）  
+软狗初始化：步骤 1	配置WDOG使能寄存器WDG_CONTROL[inten]为0，关闭看门狗；步骤 2	配置WDOG初始比较阈值寄存器WDG_LOAD；步骤 3	配置WDOG使能寄存器WDG_CONTROL[inten]为1，打开看门狗  
+
 
 ### DMA
-最大支持8个逻辑通道（Channe），通道使能可配置  
+DMA：直接内存访问方式， 是一种完全由硬件执行数据搬移的工作方式，通过一个独立于处理器的总线主控制器执行数据搬移操作  
+不需要经过CPU，数据被直接在存储器之间，存储器与外设之间进行搬移  
+一般以中断方式向CPU报告传送操作的完成
 
 # DEV
 DEV主要是通过OS的timer、retry队列和状态机实现子系统的各个设备的监控和管理  
@@ -162,3 +172,9 @@ DEV的模块的软件实现的主要目标：
 
 ## SOC_APP_CORE
 Hi1813EV100计算和控制子系统由位于同一个Cluster内部的4个ARM Cortex-A55处理器构成。其中1个Cortex-A55承载OM和FE功能，另外3个Cortex-A55承载BE功能
+
+## SOC_NFI_CORE
+支持240个中断  
+支持每个NFI_CORE 可配置4个可编程64 bits Timer  
+每个Timer支持当计数值减到0的当拍会产生高电平中断  
+支持8个NFI_CORE共享1个UART接口  
